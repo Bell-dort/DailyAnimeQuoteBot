@@ -1,7 +1,7 @@
 import random
 
 from bing_image_downloader import downloader
-from PIL import Image, ImageEnhance, ImageDraw, ImageFont
+from PIL import Image, ImageEnhance, ImageDraw, ImageFont, ImageOps, ImageFilter
 
 
 class Tweet:
@@ -43,7 +43,15 @@ class Tweet:
         else:
             self.image = self.image.crop((diff_size, 0, image_height + diff_size, image_height))
 
-        #font = ImageFont.truetype()
+        color_enhancer = ImageEnhance.Color(self.image)
+        self.image = color_enhancer.enhance(2)
+
+        brightness_enhancer = ImageEnhance.Brightness(self.image)
+        self.image = brightness_enhancer.enhance(0.3)
+
+        image_filter = ImageFilter.GaussianBlur(2)
+        #self.image = self.image.filter(image_filter)
+        font = ImageFont.truetype("Rochester-Regular.ttf", size=int(self.image.width/20))
         draw = ImageDraw.Draw(self.image)
-        draw.text((self.image.width/2, self.image.width - self.image.width/10), "\"Citation\"")
+        draw.text((self.image.width/2, self.image.width - self.image.width/10), '"' + self.quote + '"', font=font, anchor='mm')
         self.image.show()
